@@ -8,5 +8,6 @@ public class Main {
 
 
         System.out.println("Feature! Amazing!");
+        System.out.println("Marvelous!");
     }
 }
