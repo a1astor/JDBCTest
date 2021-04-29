@@ -3,6 +3,9 @@
     <title>Bye Page!</title>
 </head>
 <body>
-Students Demo - Bye Page
+<div>Students Demo - Bye Page</div>
+
+<div>${userName}</div>
+
 </body>
 </html>
