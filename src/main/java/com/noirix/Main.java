@@ -1,13 +1,15 @@
 package com.noirix;
 
+import com.noirix.domain.User;
+import com.noirix.repository.UserRepository;
+import com.noirix.repository.impl.UserRepositoryImpl;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello");
-        System.out.println("World");
-        System.out.println("!!!!");
+        UserRepository userRepository = new UserRepositoryImpl();
 
-
-        System.out.println("Feature! Amazing!");
-        System.out.println("Marvelous!");
+        for (User user : userRepository.findAll()) {
+            System.out.println(user);
+        }
     }
 }

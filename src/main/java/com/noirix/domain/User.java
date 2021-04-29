@@ -1,5 +1,9 @@
 package com.noirix.domain;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.sql.Date;
 import java.util.Objects;
 
 public class User {
@@ -10,16 +14,16 @@ public class User {
 
     private String surname;
 
-    private String birthDate;
+    private Date birthDate;
 
     private String login;
 
-    private String weight;
+    private Float weight;
 
     public User() {
     }
 
-    public User(Long id, String name, String surname, String birthDate, String login, String weight) {
+    public User(Long id, String name, String surname, Date birthDate, String login, Float weight) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -52,11 +56,11 @@ public class User {
         this.surname = surname;
     }
 
-    public String getBirthDate() {
+    public Date getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(String birthDate) {
+    public void setBirthDate(Date birthDate) {
         this.birthDate = birthDate;
     }
 
@@ -68,11 +72,11 @@ public class User {
         this.login = login;
     }
 
-    public String getWeight() {
+    public Float getWeight() {
         return weight;
     }
 
-    public void setWeight(String weight) {
+    public void setWeight(Float weight) {
         this.weight = weight;
     }
 
@@ -87,5 +91,10 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, surname, birthDate, login, weight);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
     }
 }
