@@ -19,15 +19,11 @@ public class Main {
 //            System.err.println(e.getMessage());
 //        }
 
-        //Save
-//        User user = new User();
-//        user.setName("Test");
-//        user.setSurname("Save");
-//        user.setLogin("test_save_2");
-//        user.setWeight(110f);
-//        user.setBirthDate(new Date(12000000L));
-//
-//        System.out.println(userRepository.save(user));
+        //update
+        User user = userRepository.findOne(2L);
+        user.setName("USHER");
+        System.out.println(userRepository.update(user).getName());
+        userRepository.delete(2L);
 
         //Check function call
         //System.out.println(userRepository.getUserExpensiveCarPrice(100));

@@ -3,11 +3,11 @@ package com.noirix.repository.impl;
 import com.noirix.domain.User;
 import com.noirix.exception.NoSuchEntityException;
 import com.noirix.repository.UserRepository;
+import com.noirix.util.DBUtils;
 import com.noirix.util.DatabasePropertiesReader;
 
 import java.sql.Connection;
 import java.sql.Date;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,10 +15,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.noirix.util.DatabasePropertiesReader.DATABASE_DRIVER_NAME;
-import static com.noirix.util.DatabasePropertiesReader.DATABASE_LOGIN;
-import static com.noirix.util.DatabasePropertiesReader.DATABASE_PASSWORD;
-import static com.noirix.util.DatabasePropertiesReader.DATABASE_URL;
 
 public class UserRepositoryImpl implements UserRepository {
 
@@ -42,18 +38,7 @@ public class UserRepositoryImpl implements UserRepository {
         ResultSet rs;
 
         try {
-            Class.forName(reader.getProperty(DATABASE_DRIVER_NAME));
-        } catch (ClassNotFoundException e) {
-            System.err.println("JDBC Driver Cannot be loaded!");
-            throw new RuntimeException("JDBC Driver Cannot be loaded!");
-        }
-
-        String jdbcURL = reader.getProperty(DATABASE_URL);
-        String login = reader.getProperty(DATABASE_LOGIN);
-        String password = reader.getProperty(DATABASE_PASSWORD);
-
-        try {
-            connection = DriverManager.getConnection(jdbcURL, login, password);
+            connection = DBUtils.getConnection();
             statement = connection.createStatement();
             rs = statement.executeQuery(findAllQuery);
 
@@ -66,7 +51,6 @@ public class UserRepositoryImpl implements UserRepository {
                 user.setLogin(rs.getString(LOGIN));
                 user.setBirthDate(rs.getDate(BIRTH_DATE));
                 user.setWeight(rs.getFloat(WEIGHT));
-
                 result.add(user);
             }
 
@@ -86,18 +70,7 @@ public class UserRepositoryImpl implements UserRepository {
         ResultSet rs;
 
         try {
-            Class.forName(reader.getProperty(DATABASE_DRIVER_NAME));
-        } catch (ClassNotFoundException e) {
-            System.err.println("JDBC Driver Cannot be loaded!");
-            throw new RuntimeException("JDBC Driver Cannot be loaded!");
-        }
-
-        String jdbcURL = reader.getProperty(DATABASE_URL);
-        String login = reader.getProperty(DATABASE_LOGIN);
-        String password = reader.getProperty(DATABASE_PASSWORD);
-
-        try {
-            connection = DriverManager.getConnection(jdbcURL, login, password);
+            connection = DBUtils.getConnection();
             statement = connection.prepareStatement(findById);
             statement.setLong(1, id);
             rs = statement.executeQuery();
@@ -130,18 +103,7 @@ public class UserRepositoryImpl implements UserRepository {
         PreparedStatement statement;
 
         try {
-            Class.forName(reader.getProperty(DATABASE_DRIVER_NAME));
-        } catch (ClassNotFoundException e) {
-            System.err.println("JDBC Driver Cannot be loaded!");
-            throw new RuntimeException("JDBC Driver Cannot be loaded!");
-        }
-
-        String jdbcURL = reader.getProperty(DATABASE_URL);
-        String login = reader.getProperty(DATABASE_LOGIN);
-        String password = reader.getProperty(DATABASE_PASSWORD);
-
-        try {
-            connection = DriverManager.getConnection(jdbcURL, login, password);
+            connection = DBUtils.getConnection();
             statement = connection.prepareStatement(insertQuery);
 
             PreparedStatement lastInsertId = connection.prepareStatement("SELECT currval('users_id_seq') as last_insert_id;");
@@ -170,13 +132,45 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User update(User entity) {
-        return null;
+    public User update(User user) {
+        final String updateQuery = "update Users set name = ?,surname = ?,birth_date = ?,login = ?, weight = ? where id = ? ";
+
+        Connection connection;
+        PreparedStatement statement;
+
+        try {
+            connection = DBUtils.getConnection();
+            statement = connection.prepareStatement(updateQuery);
+            statement.setString(1, user.getName());
+            statement.setString(2, user.getSurname());
+            statement.setDate(3, new Date(user.getBirthDate().getTime()));
+            statement.setString(4, user.getLogin());
+            statement.setFloat(5, user.getWeight());
+            statement.setLong(6, user.getId());
+            statement.executeUpdate();
+            return findOne(user.getId());
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException("SQL Issues!");
+        }
     }
 
     @Override
     public void delete(Long id) {
+        final String removeQuery = "delete from users where id = ? ";
 
+        Connection connection;
+        PreparedStatement statement;
+
+        try {
+            connection = DBUtils.getConnection();
+            statement = connection.prepareStatement(removeQuery);
+            statement.setLong(1, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException("SQL Issues!");
+        }
     }
 
     @Override
@@ -192,19 +186,9 @@ public class UserRepositoryImpl implements UserRepository {
         PreparedStatement statement;
         ResultSet rs;
 
-        try {
-            Class.forName(reader.getProperty(DATABASE_DRIVER_NAME));
-        } catch (ClassNotFoundException e) {
-            System.err.println("JDBC Driver Cannot be loaded!");
-            throw new RuntimeException("JDBC Driver Cannot be loaded!");
-        }
-
-        String jdbcURL = reader.getProperty(DATABASE_URL);
-        String login = reader.getProperty(DATABASE_LOGIN);
-        String password = reader.getProperty(DATABASE_PASSWORD);
 
         try {
-            connection = DriverManager.getConnection(jdbcURL, login, password);
+            connection = DBUtils.getConnection();
             statement = connection.prepareStatement(findPriceFunction);
             statement.setInt(1, userId);
             rs = statement.executeQuery();
@@ -218,4 +202,6 @@ public class UserRepositoryImpl implements UserRepository {
             throw new RuntimeException("SQL Issues!");
         }
     }
+
+
 }
