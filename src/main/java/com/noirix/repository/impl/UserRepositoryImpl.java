@@ -158,19 +158,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void delete(Long id) {
         final String removeQuery = "delete from users where id = ? ";
-
-        Connection connection;
-        PreparedStatement statement;
-
-        try {
-            connection = DBUtils.getConnection();
-            statement = connection.prepareStatement(removeQuery);
-            statement.setLong(1, id);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("SQL Issues!");
-        }
+        DBUtils.deleteById(id,removeQuery);
     }
 
     @Override

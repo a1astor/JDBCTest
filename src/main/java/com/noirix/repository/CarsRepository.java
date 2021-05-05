@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface CarsRepository extends CrudOperations<Long, Car> {
 
-    Car getCarByDealerId();
+    List<Car> getAllDealerCars(Long dealerID);
 
-    List<Car> getAllCars();
+    List<Car> getMostExpensiveCars();
 }

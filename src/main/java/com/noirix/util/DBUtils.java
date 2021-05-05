@@ -2,6 +2,7 @@ package com.noirix.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import static com.noirix.util.DatabasePropertiesReader.*;
@@ -29,5 +30,20 @@ public class DBUtils {
 
         connection = DriverManager.getConnection(jdbcURL, login, password);
         return connection;
+    }
+
+    public static void deleteById(Long id, String removeQuery) {
+        Connection connection;
+        PreparedStatement statement;
+
+        try {
+            connection = DBUtils.getConnection();
+            statement = connection.prepareStatement(removeQuery);
+            statement.setLong(1, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException("SQL Issues!");
+        }
     }
 }
