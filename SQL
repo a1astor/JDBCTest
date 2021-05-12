@@ -2,7 +2,20 @@
 from users
 where date_part('year', age(birth_date)) between 19 and 24;
 2. select distinct users.name ||' '|| surname , (select count (*) from cars where users.id = cars.owner) as count from users, cars
-3. 
+3. select dealer_id, model
+from cars
+group by dealer_id, model
+order by dealer_id, sum(price) desc
+//TODO add limit 3
 4.select login
 from users
 where (select count(*) from cars where cars.owner = users.id) > 3;
+5. select dealer_id, sum(price)
+from cars
+group by dealer_id;
+6. select count(*) from
+(select id from users where
+    (select max(price) from cars where owner = users.id)
+    >
+    (select avg(price) from cars)
+    ) as up
