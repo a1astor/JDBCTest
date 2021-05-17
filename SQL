@@ -2,11 +2,19 @@
 from users
 where date_part('year', age(birth_date)) between 19 and 24;
 2. select distinct users.name ||' '|| surname , (select count (*) from cars where users.id = cars.owner) as count from users, cars
-3. select dealer_id, model
-from cars
-group by dealer_id, model
-order by dealer_id, sum(price) desc
-//TODO add limit 3
+3 WITH cte AS
+         ( SELECT dealer_id, model,
+                  ROW_NUMBER() OVER (PARTITION BY dealer_id
+                      ORDER BY cnt DESC
+                      )
+                      AS rn
+           FROM (select dealer_id, model, count(model) as cnt from cars group by dealer_id, model order by count(model) desc) as alt
+         )
+SELECT dealer_id, model
+FROM cte
+WHERE rn <= 3
+ORDER BY dealer_id, rn ;. 
+
 4.select login
 from users
 where (select count(*) from cars where cars.owner = users.id) > 3;
